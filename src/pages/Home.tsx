@@ -2,7 +2,7 @@ import { Card } from "#components/ui/card";
 import { useEffect, useState } from "react";
 import { addImg, addTask, delImg, delTask, editTask, getData } from "../store/todoSlice";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../store/store";
+import type { RootState, AppDispatch } from "../store/store";
 import { Button } from "@base-ui/react/button";
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -14,7 +14,7 @@ export default function Home(){
 
     const mainData = useSelector((state:RootState) => state.todos)
     const {data} = useSelector((state:RootState) => state.todos)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     
 
     useEffect(() => {
@@ -23,13 +23,13 @@ export default function Home(){
     
     
     const [openAddImgMenu, setOpenAddImgMenu] = useState(false)
-    const [fileImages, setFileImages] = useState(null)
+    const [fileImages, setFileImages] = useState<FileList | null>(null)
 
     
     const [openAdd, setOpenAdd] = useState(false)
     const [addName, setAddName] = useState('')
     const [addDesc, setAddDesc] = useState('')
-    const [addFile, setAddFile] = useState(null)
+    const [addFile, setAddFile] = useState<FileList | null>(null)
 
 
     function send(){
@@ -37,7 +37,7 @@ export default function Home(){
         formData.append("name", addName)
         formData.append("description", addDesc)
         if(addFile){
-            for (const file of addFile) {
+            for (const file of Array.from(addFile)) {
                 formData.append('images', file)
             }
         }
@@ -56,7 +56,7 @@ export default function Home(){
     })
     const [openEdit, setOpenEdit] = useState(false)
 
-    function openEditMenu(obj){
+    function openEditMenu(obj: any){
         setOpenEdit(true)
         setEdit({
             id: obj.id,
@@ -68,11 +68,11 @@ export default function Home(){
     function addNewImages(){
         const formData = new FormData();
         if(fileImages){
-            for (const file of fileImages) {
+            for (const file of Array.from(fileImages)) {
                 formData.append('images', file)
             }
         }
-        dispatch(addImg(fileImages))
+        dispatch(addImg(formData))
     }
 
     if(mainData.isLoading){
@@ -89,7 +89,7 @@ export default function Home(){
             </div>
             <div className="flex flex-wrap gap-5 py-25 max-w-300 m-auto">
                 {
-                    data.map(el => (
+                    data.map((el: any) => (
                         <Card key={el.id} className="bg-black text-white p-5 text-center w-[23%] items-center transition-all hover:scale-105 hover:rounded-4xl duration-250">
                             <Swiper
                               slidesPerView="auto"
@@ -98,7 +98,7 @@ export default function Home(){
                               pagination={{ clickable: true }} 
                               className=""
                             >
-                              {el.images.map((img) => (
+                              {el.images?.map((img: any) => (
                                 <SwiperSlide 
                                   key={img.id} 
                                   className="w-!80 shrink-0" >

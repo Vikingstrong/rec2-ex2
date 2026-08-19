@@ -1,96 +1,97 @@
-import { asyncThunkCreator, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
-import { useDispatch } from "react-redux";
 
-const apiUrl = 'https://to-dos-api.softclub.tj/api/to-dos'
+const apiUrl = 'https://to-dos-api.softclub.tj/api/to-dos';
 
-
-interface imgObj{
-    id: number,
-    imageName:string
+export interface ImgObj {
+    id: number;
+    imageName: string;
 }
 
-interface objData{
-    id: number,
-    name: string,
-    description: string,
-    images:imgObj[]
+export interface ObjData {
+    id: number;
+    name: string;
+    description: string;
+    images: ImgObj[];
 }
 
-interface typeInitial{
-    isLoading: boolean,
-    data: objData[]
+interface TypeInitial {
+    isLoading: boolean;
+    data: ObjData[];
 }
-const initialState:typeInitial = {
+
+const initialState: TypeInitial = {
     isLoading: false,
-    data:[]
-}
+    data: []
+};
 
-export const getData = createAsyncThunk('todos/getData',async() => {
+export const getData = createAsyncThunk('todos/getData', async () => {
     try {
-        const {data} = await axios.get(apiUrl)
-        return data.data
+        const { data } = await axios.get(apiUrl);
+        return data.data;
     } catch (error) {
-        
+        console.error(error);
     }
-})
-export const delTask = createAsyncThunk('todos/delTask', async(id:number, {dispatch}) => {
+});
+
+export const delTask = createAsyncThunk('todos/delTask', async (id: number, { dispatch }) => {
     try {
-        await axios.delete(`${apiUrl}?id=${id}`)
-        dispatch(getData())
+        await axios.delete(`${apiUrl}?id=${id}`);
+        dispatch(getData());
     } catch (error) {
-        
+        console.error(error);
     }
-})
-export const editTask = createAsyncThunk('todos/editTask', async(obj, {dispatch}) => {
+});
+
+export const editTask = createAsyncThunk('todos/editTask', async (obj: { id: number; name: string; description: string }, { dispatch }) => {
     try {
-        await axios.put(apiUrl, obj)
-        dispatch(getData())
+        await axios.put(apiUrl, obj);
+        dispatch(getData());
     } catch (error) {
-        
+        console.error(error);
     }
-})
-export const addTask = createAsyncThunk('todos/addTask', async(obj, {dispatch}) => {
+});
+
+export const addTask = createAsyncThunk('todos/addTask', async (formData: FormData, { dispatch }) => {
     try {
-        await axios.post(apiUrl, obj)
-        dispatch(getData())
+        await axios.post(apiUrl, formData);
+        dispatch(getData());
     } catch (error) {
-        
+        console.error(error);
     }
-})
-export const delImg = createAsyncThunk('todos/delImg', async(id, {dispatch})=>{
+});
+
+export const delImg = createAsyncThunk('todos/delImg', async (id: number, { dispatch }) => {
     try {
-        await axios.delete(`${apiUrl}/images/${id}`)
-        dispatch(getData())
+        await axios.delete(`${apiUrl}/images/${id}`);
+        dispatch(getData());
     } catch (error) {
-        
+        console.error(error);
     }
-})
-export const addImg = createAsyncThunk('todos/addImg', async(img, {dispatch}) => {
+});
+
+export const addImg = createAsyncThunk('todos/addImg', async (formData: FormData, { dispatch }) => {
     try {
-        await axios.post(apiUrl, img)
-        dispatch(getData())
+        await axios.post(`${apiUrl}/images`, formData);
+        dispatch(getData());
     } catch (error) {
-        
+        console.error(error);
     }
-})
+});
 
 export const todoSlice = createSlice({
     name: 'todos',
     initialState,
-    reducers:{
-
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getData.pending, (state) => {
-            state.isLoading = true
-        })
+            state.isLoading = true;
+        });
         builder.addCase(getData.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.data = action.payload
-        })
+            state.isLoading = false;
+            state.data = action.payload || [];
+        });
     }
-})
+});
 
-
-export default todoSlice.reducer
+export default todoSlice.reducer;
