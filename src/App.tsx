@@ -2,7 +2,8 @@ import { createBrowserRouter, RouterProvider } from "react-router"
 import Layout from "./Layout/Layout"
 import { lazy } from "react"
 
-const HomePg = lazy(() => import("./pages/Home"))
+const ReduxPg = lazy(() => import("./pages/Redux"))
+const JotaiPg = lazy(() => import("./pages/Jotai"))
 
 const router = createBrowserRouter([
   {
@@ -11,7 +12,11 @@ const router = createBrowserRouter([
     children:[
       {
         index: true,
-        element: <HomePg/>
+        element: <JotaiPg/>
+      },
+      {
+        path: "/redux",
+        element: <ReduxPg/>
       }
     ]
   }
